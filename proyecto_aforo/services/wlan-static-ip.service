@@ -1,0 +1,13 @@
+[Unit]
+Description=Asignar IP estatica a wlan0 para AP
+After=network.target hostapd.service
+Requires=hostapd.service
+
+[Service]
+Type=oneshot
+ExecStartPre=/bin/sleep 10
+ExecStart=/bin/sh -c '/sbin/ip addr add 192.168.4.1/24 dev wlan0 || true'
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
