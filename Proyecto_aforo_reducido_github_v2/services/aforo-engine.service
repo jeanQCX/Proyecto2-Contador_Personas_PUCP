@@ -1,0 +1,13 @@
+[Unit]
+Description=Aforo Engine - Motor de aforo Modo 2
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/home/pi/proyecto_aforo/aforo
+ExecStart=/home/pi/proyecto_aforo/afov/bin/python main.py
+Restart=no
+
+[Install]
+WantedBy=multi-user.target

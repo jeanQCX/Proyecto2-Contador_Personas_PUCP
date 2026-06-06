@@ -1,0 +1,14 @@
+[Unit]
+Description=Aforo Boot Manager - Selector de modo
+After=multi-user.target
+Wants=multi-user.target
+
+[Service]
+Type=simple
+User=root
+ExecStart=/home/pi/proyecto_aforo/afov/bin/python /home/pi/proyecto_aforo/aforo/boot_manager.py
+Restart=no
+RemainAfterExit=no
+
+[Install]
+WantedBy=multi-user.target
