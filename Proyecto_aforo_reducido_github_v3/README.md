@@ -220,7 +220,7 @@ git clone git@github.com:jeanQCX/Proyecto2-Contador\_Personas\_PUCP.git
 
 ```bash
 
-mv Proyecto2-Contador\_Personas\_PUCP/Proyecto\_aforo\_reducido\_github\_v2/\* .
+mv Proyecto2-Contador\_Personas\_PUCP/Proyecto\_aforo\_reducido\_github\_v3/\* .
 
 rm -rf Proyecto2-Contador\_Personas\_PUCP
 
