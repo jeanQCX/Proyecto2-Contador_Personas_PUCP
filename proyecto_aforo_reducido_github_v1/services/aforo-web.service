@@ -1,0 +1,13 @@
+[Unit]
+Description=Aforo Web - Servidor de configuracion
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/home/pi/proyecto_aforo/aforo/web
+ExecStart=/home/pi/proyecto_aforo/afov/bin/python app.py
+Restart=no
+
+[Install]
+WantedBy=multi-user.target

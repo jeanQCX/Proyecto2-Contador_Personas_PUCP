@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuracion de Aforo</title>
+    <link rel="icon" type="image/png" href="/static/icon.png">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<header>
+    <img src="/static/icon.png" alt="Logo" class="logo">
+    <h1>Sistema de Aforo</h1>
+</header>
+
+<div class="contenedor">
+
+    <!-- CAMARA -->
+    <div class="seccion-camara">
+        <div class="camara-header">
+            <h2 id="paso-titulo">Selecciona un modo de configuracion</h2>
+            <button class="btn-secundario" onclick="actualizarFoto()">Actualizar foto</button>
+        </div>
+
+        <div class="camara-wrapper">
+            <img id="camara-img" src="/frame" alt="Frame de camara" onclick="onClickImagen(event)">
+            <canvas id="overlay" onclick="onClickImagen(event)"></canvas>
+        </div>
+
+        <p id="instruccion" class="instruccion">Selecciona Linea 1, Linea 2 o ROI para comenzar.</p>
+    </div>
+
+    <!-- MODOS + TABLA + BOTONES -->
+    <div class="seccion-controles">
+
+        <!-- Selector de modo -->
+        <div class="modos">
+            <button id="btn-modo-roi" class="btn-modo" onclick="seleccionarModo('roi')">
+                <span class="dot" style="background:#33ff66"></span> ROI
+            </button>
+            <button id="btn-modo-per" class="btn-modo" onclick="seleccionarModo('linea_personas')">
+                <span class="dot" style="background:#4488ff"></span> Linea 1 (Personas)
+            </button>
+            <button id="btn-modo-veh" class="btn-modo" onclick="seleccionarModo('linea_vehiculos')">
+                <span class="dot" style="background:#ff3333"></span> Linea 2 (Vehiculos)
+            </button>
+        </div>
+
+        <!-- Acciones del modo activo -->
+        <div id="acciones-modo" class="acciones-modo oculto">
+            <button class="btn-guardar" onclick="guardarModoActual()">Guardar</button>
+            <button class="btn-resetear" onclick="resetearModoActual()">Resetear</button>
+        </div>
+        
+        <!-- Configuracion de aforo -->
+        <div class="seccion-aforo">
+            <h2>Aforo maximo</h2>
+            <div class="aforo-fila">
+                <label>Personas</label>
+                <input type="number" id="max-personas" min="0" value="100">
+            </div>
+            <div class="aforo-fila">
+                <label>Vehiculos</label>
+                <input type="number" id="max-vehiculos" min="0" value="100">
+            </div>
+
+            <h2 style="margin-top:12px">Offset inicial</h2>
+            <div class="aforo-fila">
+                <label>Personas</label>
+                <input type="number" id="offset-personas" min="0" value="0">
+            </div>
+            <div class="aforo-fila">
+                <label>Vehiculos</label>
+                <input type="number" id="offset-vehiculos" min="0" value="0">
+            </div>
+
+            <button class="btn-guardar" style="margin-top:12px;width:100%" onclick="guardarAforo()">Guardar aforo</button>
+        </div>
+
+        <!-- Tabla config -->
+        <h2>Configuracion actual</h2>
+        <div id="tabla-config"></div>
+        
+        <!-- Seccion avanzado colapsable -->
+        <div class="seccion-avanzado">
+            <button class="btn-colapsar" onclick="toggleAvanzado()">
+                &#9660; Avanzado / Red
+            </button>
+            <div id="panel-avanzado" class="panel-avanzado oculto">
+                <p class="avanzado-advertencia">
+                    &#9888; Cambiar estos valores afectara la red WiFi del dispositivo.
+                    Aplican al presionar Finalizar configuracion.
+                </p>
+                <div class="aforo-fila">
+                    <label>SSID</label>
+                    <input type="text" id="wifi-ssid" maxlength="32" value="aforo-config">
+                </div>
+                <div class="aforo-fila">
+                    <label>Contrasena</label>
+                    <input type="password" id="wifi-password" maxlength="63" value="12345678">
+                </div>
+                <button class="btn-guardar-red" onclick="guardarRed()">Guardar configuracion de red</button>
+            </div>
+        </div>
+
+        <!-- Acciones finales -->
+        <div class="controles-finales">
+            <button class="btn-resetear-todo" onclick="resetearTodo()">Resetear todo</button>
+            <button class="btn-finalizar" onclick="finalizar()">Finalizar configuracion</button>
+        </div>
+
+    </div>
+
+</div>
+
+<div id="mensaje" class="mensaje oculto"></div>
+
+<script src="/static/app.js"></script>
+</body>
+</html>
