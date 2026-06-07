@@ -1,0 +1,61 @@
+{
+    "linea_personas": {
+        "p1": [
+            136,
+            251
+        ],
+        "p2": [
+            607,
+            246
+        ],
+        "p3": [
+            370,
+            345
+        ]
+    },
+    "linea_vehiculos": {
+        "p1": [
+            353,
+            23
+        ],
+        "p2": [
+            360,
+            454
+        ],
+        "p3": [
+            407,
+            267
+        ]
+    },
+    "roi": {
+        "p1": [
+            129,
+            17
+        ],
+        "p2": [
+            618,
+            465
+        ]
+    },
+    "aforo": {
+        "max_personas": 100,
+        "max_vehiculos": 100,
+        "offset_personas": 10,
+        "offset_vehiculos": 10
+    },
+    "modelo": {
+        "confianza": 0.5,
+        "iou": 0.4,
+        "epsilon_personas": 0.1,
+        "epsilon_vehiculos": 0.1
+    },
+    "camara": {
+        "indice": 0,
+        "ancho": 480,
+        "alto": 640
+    },
+    "red": {
+        "ssid": "aforo-config",
+        "password": "12345678"
+    }
+}
