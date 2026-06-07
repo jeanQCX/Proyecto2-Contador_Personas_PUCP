@@ -1,4 +1,4 @@
-# Sistema Inteligente de Aforo
+# Sistema Inteligente de Aforo :D
 
 Guía de instalación para Raspberry Pi 4.
 
