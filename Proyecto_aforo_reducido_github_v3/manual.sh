@@ -63,7 +63,7 @@ git clone git@github.com:jeanQCX/Proyecto2-Contador_Personas_PUCP.git
 # ---------------------------------------------
 # PASO 7 - Mover contenido util y limpiar
 # ---------------------------------------------
-mv Proyecto2-Contador_Personas_PUCP/Proyecto_aforo_reducido_github_v2/* .
+mv Proyecto2-Contador_Personas_PUCP/Proyecto_aforo_reducido_github_v3/* .
 rm -rf Proyecto2-Contador_Personas_PUCP
 
 # estructura resultante:
