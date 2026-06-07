@@ -162,7 +162,7 @@ Si se reinstala Raspberry Pi OS:
 - Se deben repetir los pasos anteriores.
 - Es recomendable eliminar la clave antigua de GitHub antes de registrar la nueva.
 
--Como quedara al final el proyecto:
+- Como quedara al final el proyecto:
 ```text
 /home/pi/proyecto_aforo/
 │
