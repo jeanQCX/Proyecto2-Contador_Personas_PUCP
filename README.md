@@ -120,7 +120,10 @@ Estructura esperada:
 ├── aforo/
 ├── services/
 ├── instalar_dependencias.sh
-└── instalar_servicios.sh
+├── instalar_servicios.sh
+├── manual.sh
+├── README.md
+└── requirements.txt
 ```
 
 ---
@@ -158,3 +161,46 @@ Si se reinstala Raspberry Pi OS:
 - La clave SSH se perderá.
 - Se deben repetir los pasos anteriores.
 - Es recomendable eliminar la clave antigua de GitHub antes de registrar la nueva.
+
+-Como quedara al final el proyecto:
+```text
+/home/pi/proyecto_aforo/
+│
+├── instalar_dependencias.sh
+├── instalar_servicios.sh
+├── manual.sh
+├── README.md
+├── requirements.txt
+│
+├── aforo/
+│   ├── best_256.pt
+│   ├── best_320.pt
+│   ├── best_640.pt
+│   ├── boot_manager.py
+│   ├── config.json
+│   ├── config_manager.py
+│   ├── counter.py
+│   ├── geometry.py
+│   ├── main.py
+│   ├── main_debug.py
+│   ├── my_botsort.yaml
+│   ├── my_bytetrack.yaml
+│   ├── tracker.py
+│   │
+│   ├── web/
+│   │   ├── app.py
+│   │   ├── static/
+│   │   │   ├── app.js
+│   │   │   ├── icon.png
+│   │   │   └── style.css
+│   │   │
+│   │   └── templates/
+│   │       └── index.html
+│   │
+│   └── yolo26n_rx256_ncnn_model/
+│
+└── services/
+    ├── aforo-engine.service
+    ├── aforo-web.service
+    └── wlan-static-ip.service
+```
