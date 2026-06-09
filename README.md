@@ -125,9 +125,19 @@ Estructura esperada:
 ├── README.md
 └── requirements.txt
 ```
-
 ---
 
+## Paso 7 y 8 - Alternativo: solo clonar la carpeta del repo q quieres
+
+```bash
+git clone --no-checkout git@github.com:jeanQCX/Proyecto2-Contador_Personas_PUCP.git
+cd Proyecto2-Contador_Personas_PUCP
+git sparse-checkout init
+git sparse-checkout set Proyecto_aforo_reducido_github_v3
+git checkout main
+```
+
+---
 ## Paso 9 - Instalar dependencias
 
 ```bash
