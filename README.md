@@ -1,6 +1,26 @@
 # Sistema Inteligente de Aforo :D
 
-Guia de instalacion para Raspberry Pi 3B y 4B.
+Guia de instalacion para Raspberry Pi 3B, 4B y 5.
+
+Cada version de Pi tiene su propia carpeta en el repositorio
+con los scripts de instalacion adaptados:
+
+```
+Proyecto2-Contador_Personas_PUCP/
+├── Proyecto_aforo_reducido_github_v3/      <- Pi 3B y 4B
+│   ├── instalar_dependencias.sh            <- usa RPi.GPIO
+│   └── ...
+│
+└── Proyecto_aforo_reducido_github_v4_pi5/  <- Pi 5
+    ├── instalar_dependencias.sh            <- usa lgpio
+    └── ...
+```
+
+Las diferencias entre versiones son:
+- `boot_manager.py` -> Pi 3B/4B usa RPi.GPIO, Pi 5 usa lgpio
+- `instalar_dependencias.sh` -> instala la libreria GPIO correspondiente
+
+Todo lo demas es identico entre versiones.
 
 ---
 
@@ -11,7 +31,9 @@ Guia de instalacion para Raspberry Pi 3B y 4B.
 │
 ├── instalar_dependencias.sh
 ├── instalar_servicios.sh
+├── manual.sh
 ├── README.md
+├── requirements.txt
 │
 ├── afov/                          <- venv Python (se crea con instalar_dependencias.sh)
 │
@@ -51,12 +73,17 @@ Guia de instalacion para Raspberry Pi 3B y 4B.
 
 ## Hardware
 
-- Raspberry Pi 3B o 4B
+- Raspberry Pi 3B, 4B o 5
 - LED azul en GPIO 24
 - Boton en GPIO 27 (pull-up, presionado = LOW)
 - ATENCION: GPIO 17 y GPIO 23 estan danados en la Pi anterior
 - Camara compatible con V4L2
 - Cable RJ45 para conexion punto a punto con PC
+
+> NOTA Pi5: el chip GPIO es diferente al de Pi3/Pi4. Por eso
+> boot_manager.py usa lgpio en lugar de RPi.GPIO. Si conectas
+> un AI HAT+ u otro HAT de 40 pines, los pines GPIO siguen
+> accesibles por el conector pass-through en la parte superior del HAT.
 
 ---
 
@@ -77,32 +104,71 @@ Usar Raspberry Pi Imager con Raspberry Pi OS Lite 64-bit y configurar:
 
 ---
 
-## Como obtener la IP de la Pi para conectarte por primera vez
+## Como obtener la IP de la Pi y configurar conexion permanente
 
-Hay varias formas segun lo que tengas disponible:
+El objetivo es configurar una IP estatica por ethernet para que
+siempre puedas conectarte con `ssh pi@aforo.local` sin depender
+de WiFi ni de monitor. Solo necesitas hacerlo una vez.
 
-### Opcion A - Monitor, teclado y mouse (mas directa)
-Conectar monitor y teclado a la Pi, encenderla y entrar al sistema.
-Desde la terminal ver la IP con:
+### Opcion A - Acceso fisico (monitor + teclado)
+
+1. Conectar monitor, teclado y mouse a la Pi y encenderla
+2. Entrar al sistema y ver la IP que le asigno el WiFi:
 ```bash
-ip addr show eth0
+ip addr show wlan0
 ```
-Luego asignar IP estatica por ethernet y activar VNC si quieres
-programar de forma remota desde tu PC.
+3. Desde esa misma terminal configurar IP estatica en ethernet:
+```bash
+sudo nmcli con add type ethernet ifname eth0 con-name eth-static ipv4.method manual ipv4.addresses "192.168.0.10/24"
+sudo nmcli con up eth-static
+```
+4. Activar VNC si quieres acceso grafico remoto:
+```bash
+sudo raspi-config
+# Interface Options -> VNC -> Yes
+```
+5. Configurar tu PC como se indica abajo
+6. Ya puedes desconectar monitor y teclado, nunca mas los necesitas
 
 ### Opcion B - Punto de acceso del celular (sin monitor)
+
 1. Crear un AP en tu celular con el mismo SSID y contrasena
    que configuraste en Pi Imager
-2. La Pi se conectara automaticamente al arrancar
+2. Encender la Pi, se conectara automaticamente al WiFi del celular
 3. En la configuracion del AP del celular ver los dispositivos
    conectados para encontrar la IP de la Pi
-4. Conectarte por SSH desde tu PC usando esa IP temporal
-5. Una vez dentro asignar IP estatica por ethernet
+4. Conectarte por SSH desde tu PC usando esa IP:
+```bash
+ssh pi@<IP que encontraste>
+```
+5. Configurar IP estatica en ethernet:
+```bash
+sudo nmcli con add type ethernet ifname eth0 con-name eth-static ipv4.method manual ipv4.addresses "192.168.0.10/24"
+sudo nmcli con up eth-static
+```
+6. Configurar tu PC como se indica abajo
 
-### Opcion C - Ethernet punto a punto (recomendada para uso continuo)
-Configurar IP estatica en ambos extremos como se explica en el paso 4
-de esta guia. Requiere haber podido conectarse al menos una vez
-por alguna de las opciones anteriores.
+### Configuracion en tu PC (necesaria en ambas opciones)
+
+**En Windows:**
+Panel de control -> Centro de redes -> Cambiar configuracion del adaptador
+-> click derecho en Ethernet -> Propiedades
+-> Protocolo de Internet version 4 (TCP/IPv4) -> Propiedades
+
+```
+Direccion IP:     192.168.0.1
+Mascara:          255.255.255.0
+Puerta de enlace: (dejar vacio)
+```
+
+En el archivo hosts de Windows
+(ruta: C:\Windows\System32\drivers\etc\hosts)
+agregar al final:
+```
+192.168.0.10    aforo.local
+```
+
+A partir de aqui siempre usar `ssh pi@aforo.local` por ethernet.
 
 ---
 
@@ -144,40 +210,7 @@ ssh pi@aforo.local
 
 ---
 
-## Paso 4 - Configurar conexion ethernet punto a punto
-
-Esta configuracion hace que la Pi siempre tenga la misma IP por ethernet,
-sin depender de ninguna red WiFi ni router.
-
-### En tu PC (Windows)
-Panel de control -> Centro de redes -> Cambiar configuracion del adaptador
--> click derecho en Ethernet -> Propiedades
--> Protocolo de Internet version 4 (TCP/IPv4) -> Propiedades
-
-```
-Direccion IP:     192.168.0.1
-Mascara:          255.255.255.0
-Puerta de enlace: (dejar vacio)
-```
-
-En el archivo hosts de Windows
-(ruta: C:\Windows\System32\drivers\etc\hosts)
-agregar al final:
-```
-192.168.0.10    aforo.local
-```
-
-### En la Pi
-```bash
-sudo nmcli con add type ethernet ifname eth0 con-name eth-static ipv4.method manual ipv4.addresses "192.168.0.10/24"
-sudo nmcli con up eth-static
-```
-
-A partir de aqui siempre usar `ssh pi@aforo.local` por ethernet.
-
----
-
-## Paso 5 - Generar llave SSH para GitHub
+## Paso 4 - Generar llave SSH para GitHub
 
 ```bash
 ssh-keygen -t ed25519 -C "pi@aforo"
@@ -206,7 +239,7 @@ ssh -T git@github.com
 
 ---
 
-## Paso 6 - Crear directorio del proyecto
+## Paso 5 - Crear directorio del proyecto
 
 ```bash
 mkdir -p ~/proyecto_aforo
@@ -215,7 +248,7 @@ cd ~/proyecto_aforo
 
 ---
 
-## Paso 7 - Verificar internet
+## Paso 6 - Verificar internet
 
 ```bash
 ping -c 4 github.com
@@ -223,7 +256,7 @@ ping -c 4 github.com
 
 ---
 
-## Paso 8 - Clonar repositorio
+## Paso 7 - Clonar repositorio
 
 ```bash
 git clone git@github.com:jeanQCX/Proyecto2-Contador_Personas_PUCP.git
@@ -241,7 +274,7 @@ git checkout main
 
 ---
 
-## Paso 9 - Preparar estructura
+## Paso 8 - Preparar estructura
 
 ```bash
 mv Proyecto2-Contador_Personas_PUCP/Proyecto_aforo_reducido_github_v3/* .
@@ -250,7 +283,7 @@ rm -rf Proyecto2-Contador_Personas_PUCP
 
 ---
 
-## Paso 10 - Convertir scripts a formato Linux
+## Paso 9 - Convertir scripts a formato Linux
 
 > IMPORTANTE: los scripts .sh creados o editados en Windows tienen
 > saltos de linea CRLF que Linux no puede ejecutar.
@@ -267,7 +300,7 @@ antes de guardar: boton abajo a la derecha que dice "CRLF" -> cambiarlo a "LF".
 
 ---
 
-## Paso 11 - Instalar dependencias
+## Paso 10 - Instalar dependencias
 
 ```bash
 chmod +x instalar_dependencias.sh
@@ -279,7 +312,7 @@ chmod +x instalar_dependencias.sh
 
 ---
 
-## Paso 12 - Instalar servicios
+## Paso 11 - Instalar servicios
 
 ```bash
 chmod +x instalar_servicios.sh
@@ -295,7 +328,7 @@ aforo-boot: enabled
 
 ---
 
-## Paso 13 - Reiniciar
+## Paso 12 - Reiniciar
 
 ```bash
 sudo reboot
@@ -407,6 +440,8 @@ ssh-keygen -t ed25519 -C "pi@aforo"
   boot_manager los inicia manualmente con systemctl start.
 - aforo-boot.service es el unico servicio permanente en systemd.
 - Nunca desconectar cables GPIO con la Pi encendida.
-- Pi3 tarda mas en instalar dependencias que Pi4 por tener menos RAM
+- Pi3 tarda mas en instalar dependencias que Pi4 y Pi5 por tener menos RAM
   y CPU mas lento. El problema de /tmp con torch afecta especialmente
-  a Pi3 por tener solo 1GB de RAM.
+  a Pi3 por tener solo 1GB de RAM. Pi4 tiene 4GB y Pi5 tiene 4GB u 8GB,
+  en ambas el problema de /tmp no deberia aparecer pero el TMPDIR=~/tmp
+  se deja igual por precaucion.
