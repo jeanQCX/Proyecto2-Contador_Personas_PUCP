@@ -1,179 +1,12 @@
 # Sistema Inteligente de Aforo :D
 
-Guía de instalación para Raspberry Pi 4.
-
-## Requisitos previos
-
-- Raspberry Pi 4
-- Raspberry Pi OS Lite 64-bit
-
-### Configuración recomendada en Raspberry Pi Imager
-
-| Parámetro | Valor |
-|-----------|--------|
-| Hostname | aforo |
-| Usuario | pi |
-| Contraseña | aforo |
-| WiFi | Red disponible |
-| SSH | Habilitado |
-| VNC | Opcional |
+Guia de instalacion para Raspberry Pi 3B y 4B.
 
 ---
 
-## Paso 1 - Conectarse por SSH
+## Estructura del proyecto
 
-```bash
-ssh pi@aforo.local
 ```
-
-Contraseña:
-
-```text
-aforo
-```
-
----
-
-## Paso 2 - Actualizar sistema
-
-```bash
-sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y
-sudo reboot
-```
-
-La conexión SSH se cortará temporalmente debido al reinicio.
-
----
-
-## Paso 3 - Reconectarse
-
-```bash
-ssh pi@aforo.local
-```
-
----
-
-## Paso 4 - Configurar acceso a GitHub
-
-Generar clave SSH:
-
-```bash
-ssh-keygen -t ed25519 -C "pi@aforo"
-```
-
-Mostrar clave pública:
-
-```bash
-cat ~/.ssh/id_ed25519.pub
-```
-
-Agregar la clave en:
-
-```text
-GitHub → Settings → SSH and GPG Keys → New SSH Key
-```
-
-Verificar acceso:
-
-```bash
-ssh -T git@github.com
-```
-
----
-
-## Paso 5 - Crear directorio del proyecto
-
-```bash
-mkdir -p ~/proyecto_aforo
-cd ~/proyecto_aforo
-```
-
----
-
-## Paso 6 - Verificar Internet
-
-```bash
-ping -c 4 github.com
-```
-
----
-
-## Paso 7 - Clonar repositorio
-
-```bash
-git clone git@github.com:jeanQCX/Proyecto2-Contador_Personas_PUCP.git
-```
-
----
-
-## Paso 8 - Preparar estructura
-
-```bash
-mv Proyecto2-Contador_Personas_PUCP/Proyecto_aforo_reducido_github_v3/* .
-rm -rf Proyecto2-Contador_Personas_PUCP
-```
-
-Estructura esperada:
-
-```text
-~/proyecto_aforo/
-├── aforo/
-├── services/
-├── instalar_dependencias.sh
-├── instalar_servicios.sh
-├── manual.sh
-├── README.md
-└── requirements.txt
-```
----
-
-## Paso 7 y 8 - Alternativo: solo clonar la carpeta del repo q quieres
-
-```bash
-git clone --no-checkout git@github.com:jeanQCX/Proyecto2-Contador_Personas_PUCP.git
-cd Proyecto2-Contador_Personas_PUCP
-git sparse-checkout init
-git sparse-checkout set Proyecto_aforo_reducido_github_v3
-git checkout main
-```
-
----
-## Paso 9 - Instalar dependencias
-
-```bash
-chmod +x instalar_dependencias.sh
-./instalar_dependencias.sh
-```
-
----
-
-## Paso 10 - Instalar servicios
-
-```bash
-chmod +x instalar_servicios.sh
-./instalar_servicios.sh
-```
-
----
-
-## Paso 11 - Reiniciar
-
-```bash
-sudo reboot
-```
-
----
-
-## Notas
-
-Si se reinstala Raspberry Pi OS:
-
-- La clave SSH se perderá.
-- Se deben repetir los pasos anteriores.
-- Es recomendable eliminar la clave antigua de GitHub antes de registrar la nueva.
-
-- Como quedara al final el proyecto:
-```text
 /home/pi/proyecto_aforo/
 │
 ├── instalar_dependencias.sh
@@ -182,12 +15,14 @@ Si se reinstala Raspberry Pi OS:
 ├── README.md
 ├── requirements.txt
 │
+├── afov/                          <- venv Python (se crea con instalar_dependencias.sh)
+│
 ├── aforo/
 │   ├── best_256.pt
 │   ├── best_320.pt
 │   ├── best_640.pt
 │   ├── boot_manager.py
-│   ├── config.json
+│   ├── config.json                <- generado automaticamente
 │   ├── config_manager.py
 │   ├── counter.py
 │   ├── geometry.py
@@ -203,7 +38,6 @@ Si se reinstala Raspberry Pi OS:
 │   │   │   ├── app.js
 │   │   │   ├── icon.png
 │   │   │   └── style.css
-│   │   │
 │   │   └── templates/
 │   │       └── index.html
 │   │
@@ -214,3 +48,367 @@ Si se reinstala Raspberry Pi OS:
     ├── aforo-web.service
     └── wlan-static-ip.service
 ```
+
+---
+
+## Hardware
+
+- Raspberry Pi 3B o 4B
+- LED azul en GPIO 24
+- Boton en GPIO 27 (pull-up, presionado = LOW)
+- ATENCION: GPIO 17 y GPIO 23 estan danados en la Pi anterior
+- Camara compatible con V4L2
+- Cable RJ45 para conexion punto a punto con PC
+
+---
+
+## Requisitos previos
+
+### Flashear la SD (en tu PC)
+
+Usar Raspberry Pi Imager con Raspberry Pi OS Lite 64-bit y configurar:
+
+| Parametro  | Valor            |
+|------------|------------------|
+| Hostname   | aforo            |
+| Usuario    | pi               |
+| Contrasena | aforo            |
+| WiFi       | Red disponible   |
+| SSH        | Habilitado       |
+| VNC        | Opcional         |
+
+---
+
+## Como obtener la IP de la Pi para conectarte por primera vez
+
+Hay varias formas segun lo que tengas disponible:
+
+### Opcion A - Monitor, teclado y mouse (mas directa)
+Conectar monitor y teclado a la Pi, encenderla y entrar al sistema.
+Desde la terminal ver la IP con:
+```bash
+ip addr show eth0
+```
+Luego asignar IP estatica por ethernet y activar VNC si quieres
+programar de forma remota desde tu PC.
+
+### Opcion B - Punto de acceso del celular (sin monitor)
+1. Crear un AP en tu celular con el mismo SSID y contrasena
+   que configuraste en Pi Imager
+2. La Pi se conectara automaticamente al arrancar
+3. En la configuracion del AP del celular ver los dispositivos
+   conectados para encontrar la IP de la Pi
+4. Conectarte por SSH desde tu PC usando esa IP temporal
+5. Una vez dentro asignar IP estatica por ethernet
+
+### Opcion C - Ethernet punto a punto (recomendada para uso continuo)
+Configurar IP estatica en ambos extremos como se explica en el paso 4
+de esta guia. Requiere haber podido conectarse al menos una vez
+por alguna de las opciones anteriores.
+
+---
+
+## Paso 1 - Conectarse por SSH
+
+```bash
+ssh pi@aforo.local
+```
+
+Contrasena: `aforo`
+
+> NOTA: si sale el error "REMOTE HOST IDENTIFICATION HAS CHANGED"
+> es porque cambiaste de Pi y la huella guardada en tu PC es de la anterior.
+> Solucion desde cmd de Windows antes de conectarte:
+> ```
+> ssh-keygen -R aforo.local
+> ssh-keygen -R 192.168.0.10
+> ```
+> Luego conectarte de nuevo y escribir "yes" cuando pregunte.
+
+---
+
+## Paso 2 - Actualizar sistema
+
+```bash
+sudo apt update && sudo apt full-upgrade -y && sudo apt autoremove -y
+sudo reboot
+```
+
+La conexion SSH se cortara por el reboot, es normal.
+
+---
+
+## Paso 3 - Reconectarse
+
+```bash
+ssh pi@aforo.local
+```
+
+---
+
+## Paso 4 - Configurar conexion ethernet punto a punto
+
+Esta configuracion hace que la Pi siempre tenga la misma IP por ethernet,
+sin depender de ninguna red WiFi ni router.
+
+### En tu PC (Windows)
+Panel de control -> Centro de redes -> Cambiar configuracion del adaptador
+-> click derecho en Ethernet -> Propiedades
+-> Protocolo de Internet version 4 (TCP/IPv4) -> Propiedades
+
+```
+Direccion IP:     192.168.0.1
+Mascara:          255.255.255.0
+Puerta de enlace: (dejar vacio)
+```
+
+En el archivo hosts de Windows
+(ruta: C:\Windows\System32\drivers\etc\hosts)
+agregar al final:
+```
+192.168.0.10    aforo.local
+```
+
+### En la Pi
+```bash
+sudo nmcli con add type ethernet ifname eth0 con-name eth-static ipv4.method manual ipv4.addresses "192.168.0.10/24"
+sudo nmcli con up eth-static
+```
+
+A partir de aqui siempre usar `ssh pi@aforo.local` por ethernet.
+
+---
+
+## Paso 5 - Generar llave SSH para GitHub
+
+```bash
+ssh-keygen -t ed25519 -C "pi@aforo"
+```
+
+> IMPORTANTE: cuando pregunte el nombre del archivo presionar Enter
+> sin escribir nada. Si escribes un nombre la llave se guarda en
+> el lugar equivocado y ssh-T git@github.com no funcionara.
+
+```bash
+cat ~/.ssh/id_ed25519.pub
+```
+
+Copiar ese texto y pegarlo en:
+GitHub -> Settings -> SSH and GPG keys -> New SSH key
+
+Verificar:
+```bash
+ssh -T git@github.com
+# respuesta esperada: Hi jeanQCX! You've successfully authenticated...
+```
+
+> NOTA: cada vez que re-flasheas la SD la llave se pierde.
+> Hay que repetir este paso y agregar la nueva llave a GitHub.
+> Conviene borrar la llave vieja en GitHub antes de agregar la nueva.
+
+---
+
+## Paso 6 - Crear directorio del proyecto
+
+```bash
+mkdir -p ~/proyecto_aforo
+cd ~/proyecto_aforo
+```
+
+---
+
+## Paso 7 - Verificar internet
+
+```bash
+ping -c 4 github.com
+```
+
+---
+
+## Paso 8 - Clonar repositorio
+
+```bash
+git clone git@github.com:jeanQCX/Proyecto2-Contador_Personas_PUCP.git
+```
+
+### Alternativa: clonar solo la carpeta del proyecto (mas rapido)
+
+```bash
+git clone --no-checkout git@github.com:jeanQCX/Proyecto2-Contador_Personas_PUCP.git
+cd Proyecto2-Contador_Personas_PUCP
+git sparse-checkout init
+git sparse-checkout set Proyecto_aforo_reducido_github_v3
+git checkout main
+```
+
+---
+
+## Paso 9 - Preparar estructura
+
+```bash
+mv Proyecto2-Contador_Personas_PUCP/Proyecto_aforo_reducido_github_v3/* .
+rm -rf Proyecto2-Contador_Personas_PUCP
+```
+
+---
+
+## Paso 10 - Convertir scripts a formato Linux
+
+> IMPORTANTE: los scripts .sh creados o editados en Windows tienen
+> saltos de linea CRLF que Linux no puede ejecutar.
+> Hay que convertirlos antes de ejecutarlos.
+
+```bash
+sudo apt install dos2unix -y
+dos2unix instalar_dependencias.sh
+dos2unix instalar_servicios.sh
+```
+
+Para evitar este problema en el futuro, en VSCode cambiar el formato
+antes de guardar: boton abajo a la derecha que dice "CRLF" -> cambiarlo a "LF".
+
+---
+
+## Paso 11 - Instalar dependencias
+
+```bash
+chmod +x instalar_dependencias.sh
+./instalar_dependencias.sh
+```
+
+> NOTA: puede tardar 10-30 minutos segun la velocidad de internet
+> y el modelo de Pi. En Pi3 tarda mas que en Pi4.
+
+---
+
+## Paso 12 - Instalar servicios
+
+```bash
+chmod +x instalar_servicios.sh
+./instalar_servicios.sh
+```
+
+Verificacion esperada al final:
+```
+hostapd:    disabled
+dnsmasq:    disabled
+aforo-boot: enabled
+```
+
+---
+
+## Paso 13 - Reiniciar
+
+```bash
+sudo reboot
+```
+
+Al encender la Pi el LED debe parpadear durante 5 segundos.
+- Sin presionar el boton: Modo 2 (aforo engine)
+- Presionando el boton durante el parpadeo: Modo 1 (AP WiFi + Flask)
+
+En Modo 1 debe aparecer la red "aforo-config" y ser posible
+entrar a http://192.168.4.1 desde un celular conectado a esa red.
+
+---
+
+## Errores conocidos y soluciones
+
+### Error: cannot execute / required file not found
+```
+bash: ./instalar_dependencias.sh: cannot execute: required file not found
+```
+Causa: el archivo tiene saltos de linea CRLF de Windows.
+Solucion:
+```bash
+sudo apt install dos2unix -y
+dos2unix instalar_dependencias.sh
+dos2unix instalar_servicios.sh
+```
+
+### Error: No space left on device (durante pip install)
+```
+ERROR: Could not install packages due to an OSError: [Errno 28] No space left on device
+```
+Causa: pip usa /tmp como carpeta temporal. /tmp es un tmpfs en RAM,
+no en la SD. En Pi3 (1GB RAM) /tmp tiene solo ~450MB y torch no cabe.
+En Pi4 (4GB RAM) /tmp tiene ~1.8GB, torch cabe justo pero igual
+puede fallar en versiones futuras mas pesadas.
+Solucion: el instalar_dependencias.sh ya incluye TMPDIR=~/tmp
+que redirige la carpeta temporal a la SD donde hay espacio de sobra.
+
+### Error: librerias de CUDA/nvidia instaladas en ARM
+Causa: si ultralytics se instala antes que torch, pip busca
+la version mas reciente de torch que incluye dependencias de CUDA
+(nvidia-cudnn, nvidia-cublas, etc) que no sirven en ARM y ocupan
+cientos de MB innecesarios.
+Solucion: el instalar_dependencias.sh instala torch CPU primero
+con --index-url https://download.pytorch.org/whl/cpu antes que
+ultralytics para evitar este problema.
+
+### Error: externally-managed-environment
+```
+error: externally-managed-environment
+```
+Causa: se intento instalar con pip fuera del venv.
+Solucion: activar el venv antes de instalar:
+```bash
+source ~/proyecto_aforo/afov/bin/activate
+# debe aparecer (afov) al inicio del prompt
+```
+
+### Error: hostapd aparece como "masked"
+Causa: en versiones recientes de Pi OS, al instalar hostapd
+systemd lo enmascara automaticamente.
+Solucion: el instalar_servicios.sh ya incluye unmask antes del disable.
+Si ocurre manualmente:
+```bash
+sudo systemctl unmask hostapd.service
+sudo systemctl disable hostapd.service
+```
+
+### Error: entradas duplicadas en dhcpcd.conf o NetworkManager.conf
+Causa: el instalar_servicios.sh se ejecuto mas de una vez.
+Solucion: el instalar_servicios.sh ya verifica si las entradas
+existen antes de agregarlas. Si ocurrio antes de esta correccion:
+```bash
+sudo nano /etc/dhcpcd.conf
+# borrar el bloque duplicado de wlan0
+sudo nano /etc/NetworkManager/NetworkManager.conf
+# borrar el bloque [keyfile] duplicado
+```
+
+### Warning: REMOTE HOST IDENTIFICATION HAS CHANGED
+Causa: cambiaste de Pi y la huella SSH guardada en tu PC es de la anterior.
+Solucion desde cmd de Windows:
+```
+ssh-keygen -R aforo.local
+ssh-keygen -R 192.168.0.10
+```
+Luego conectarte de nuevo y escribir "yes".
+
+### Error: llave SSH guardada en lugar equivocado
+Causa: al ejecutar ssh-keygen se escribio un nombre de archivo
+en lugar de presionar Enter.
+Solucion: generar la llave de nuevo:
+```bash
+ssh-keygen -t ed25519 -C "pi@aforo"
+# esta vez presionar Enter en todo sin escribir nada
+```
+
+---
+
+## Notas importantes
+
+- El venv afov no esta en el repositorio por ser muy pesado.
+  Se crea localmente con instalar_dependencias.sh.
+- Los servicios aforo-web y wlan-static-ip viven en services/
+  y boot_manager los copia a /etc/systemd/system/ solo cuando
+  los necesita. No deben estar habilitados permanentemente.
+- hostapd y dnsmasq deben estar siempre en estado "disabled".
+  boot_manager los inicia manualmente con systemctl start.
+- aforo-boot.service es el unico servicio permanente en systemd.
+- Nunca desconectar cables GPIO con la Pi encendida.
+- Pi3 tarda mas en instalar dependencias que Pi4 por tener menos RAM
+  y CPU mas lento. El problema de /tmp con torch afecta especialmente
+  a Pi3 por tener solo 1GB de RAM.
