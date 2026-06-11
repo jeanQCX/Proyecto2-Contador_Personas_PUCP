@@ -11,9 +11,7 @@ Guia de instalacion para Raspberry Pi 3B y 4B.
 │
 ├── instalar_dependencias.sh
 ├── instalar_servicios.sh
-├── manual.sh
 ├── README.md
-├── requirements.txt
 │
 ├── afov/                          <- venv Python (se crea con instalar_dependencias.sh)
 │
