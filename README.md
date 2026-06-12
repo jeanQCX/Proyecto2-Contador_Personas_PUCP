@@ -269,7 +269,7 @@ git clone git@github.com:jeanQCX/Proyecto2-Contador_Personas_PUCP.git
 git clone --no-checkout git@github.com:jeanQCX/Proyecto2-Contador_Personas_PUCP.git
 cd Proyecto2-Contador_Personas_PUCP
 git sparse-checkout init
-git sparse-checkout set Proyecto_aforo_reducido_github_v3
+git sparse-checkout set Proyecto_aforo_reducido_github_v55
 git checkout main
 ```
 
@@ -278,7 +278,7 @@ git checkout main
 ## Paso 8 - Preparar estructura
 
 ```bash
-mv Proyecto2-Contador_Personas_PUCP/Proyecto_aforo_reducido_github_v3/* .
+mv Proyecto2-Contador_Personas_PUCP/Proyecto_aforo_reducido_github_v55/* .
 rm -rf Proyecto2-Contador_Personas_PUCP
 ```
 
