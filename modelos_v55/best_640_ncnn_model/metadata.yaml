@@ -1,0 +1,20 @@
+description: Ultralytics YOLO26n model trained on /content/PE2---Contador-de-personas-v3-1/data.yaml
+author: Ultralytics
+date: '2026-06-11T19:57:54.027975'
+version: 8.4.66
+license: AGPL-3.0 License (https://ultralytics.com/license)
+docs: https://docs.ultralytics.com
+stride: 32
+task: detect
+batch: 1
+imgsz:
+- 640
+- 640
+names:
+  0: peaton
+  1: vehiculo
+args:
+  batch: 1
+  half: false
+channels: 3
+end2end: false
