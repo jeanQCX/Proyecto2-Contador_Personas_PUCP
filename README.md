@@ -18,6 +18,7 @@ Proyecto2-Contador_Personas_PUCP/
 
 Las diferencias entre versiones son:
 - `boot_manager.py` -> Pi 3B/4B usa RPi.GPIO, Pi 5 usa lgpio
+- `aforo/web/app.py` -> Pi 3B/4B usa RPi.GPIO, Pi 5 usa lgpio
 - `instalar_dependencias.sh` -> instala la libreria GPIO correspondiente
 
 Todo lo demas es identico entre versiones.
@@ -326,6 +327,16 @@ dnsmasq:    disabled
 aforo-boot: enabled
 ```
 
+> NOTA: en algunas ejecuciones la salida del script se corta justo
+> despues de mostrar `hostapd: disabled` y no muestra las dos
+> lineas siguientes. Esto es normal, no significa que algo fallo.
+> Para confirmar que todo quedo bien, verificar manualmente:
+> ```bash
+> systemctl is-enabled dnsmasq
+> systemctl is-enabled aforo-boot
+> ```
+> Deben responder `disabled` y `enabled` respectivamente.
+
 ---
 
 ## Paso 12 - Reiniciar
@@ -340,6 +351,30 @@ Al encender la Pi el LED debe parpadear durante 5 segundos.
 
 En Modo 1 debe aparecer la red "aforo-config" y ser posible
 entrar a http://192.168.4.1 desde un celular conectado a esa red.
+
+---
+
+## Paso 13 (opcional) - Corregir fuentes para main_debug.py
+
+`main_debug.py` muestra una ventana OpenCV con informacion del
+pipeline (FPS, conteos, lineas, etc). Sin este paso, OpenCV no
+encuentra las fuentes necesarias para dibujar texto y la ventana
+puede tardar mucho en abrir o mostrar errores de fuentes.
+
+Este paso solo es necesario si vas a usar `main_debug.py` para
+desarrollo. No afecta a `main.py` (produccion).
+
+```bash
+sudo apt install fonts-dejavu -y
+mkdir -p /home/pi/proyecto_aforo/afov/lib/python3.13/site-packages/cv2/qt/fonts/
+cp /usr/share/fonts/truetype/dejavu/*.ttf /home/pi/proyecto_aforo/afov/lib/python3.13/site-packages/cv2/qt/fonts/
+```
+
+> NOTA: si tu version de Python en el venv no es 3.13, ajustar
+> la ruta `python3.13` segun corresponda. Verificar con:
+> ```bash
+> ls /home/pi/proyecto_aforo/afov/lib/
+> ```
 
 ---
 
