@@ -32,16 +32,11 @@ Todo lo demas es identico entre versiones.
 │
 ├── instalar_dependencias.sh
 ├── instalar_servicios.sh
-├── manual.sh
 ├── README.md
-├── requirements.txt
 │
 ├── afov/                          <- venv Python (se crea con instalar_dependencias.sh)
 │
 ├── aforo/
-│   ├── best_256.pt
-│   ├── best_320.pt
-│   ├── best_640.pt
 │   ├── boot_manager.py
 │   ├── config.json                <- generado automaticamente
 │   ├── config_manager.py
@@ -62,7 +57,7 @@ Todo lo demas es identico entre versiones.
 │   │   └── templates/
 │   │       └── index.html
 │   │
-│   └── yolo26n_rx256_ncnn_model/
+│   └── best_640_ncnn_model/
 │
 └── services/
     ├── aforo-engine.service
