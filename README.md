@@ -73,6 +73,7 @@ Todo lo demas es identico entre versiones.
 ---
 
 ## Hardware
+![Proyecto2_Contador_Personas_PUCP](imgs/pinout_rpi.png)
 
 - Raspberry Pi 3B, 4B o 5
 - LED azul en GPIO 24
