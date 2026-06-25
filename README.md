@@ -73,7 +73,7 @@ Todo lo demas es identico entre versiones.
 - Raspberry Pi 3B, 4B o 5
 - LED azul en GPIO 24
 - Boton en GPIO 27 (pull-up, presionado = LOW)
-- ATENCION: GPIO 17 y GPIO 23 estan danados en la Pi anterior
+- UART en GPIO 14 y 15, utiles para pasar la informacion obtenida
 - Camara compatible con V4L2
 - Cable RJ45 para conexion punto a punto con PC
 
