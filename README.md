@@ -259,6 +259,9 @@ ping -c 4 github.com
 git clone git@github.com:jeanQCX/Proyecto2-Contador_Personas_PUCP.git
 ```
 
+En el siguiente paso se elimanaran todas las demas carpetas que se instalen con este comando a excepcion de la carpeta objetivo con la que se quiere quedar.
+En el caso de la version v55, se recomienda una vez clonado el repositorio, extraer los modelos de la carpeta modelos_v55 y pegarlos en el directorio home, de esa forma tendras los modelos que se usan en esa version directamente. OJO, estos modelos son nccn y probablemente solo funcionen para la rpi5.
+
 ### Alternativa: clonar solo la carpeta del proyecto (mas rapido)
 
 ```bash
@@ -346,7 +349,7 @@ Al encender la Pi el LED debe parpadear durante 5 segundos.
 - Presionando el boton durante el parpadeo: Modo 1 (AP WiFi + Flask)
 
 En Modo 1 debe aparecer la red "aforo-config" y ser posible
-entrar a http://192.168.4.1 desde un celular conectado a esa red.
+entrar a http://192.168.4.1 desde un celular o laptop conectado a esa red.
 
 ---
 
