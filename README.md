@@ -85,7 +85,8 @@ Todo lo demas es identico entre versiones.
 Comando para ver el log de los servicios
 ´´´bash
 journalctl -u aforo-engine.service -f --output=cat
-´´´´
+´´´
+
 ---
 
 ## Requisitos previos
