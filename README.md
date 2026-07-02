@@ -82,6 +82,10 @@ Todo lo demas es identico entre versiones.
 > un AI HAT+ u otro HAT de 40 pines, los pines GPIO siguen
 > accesibles por el conector pass-through en la parte superior del HAT.
 
+Comando para ver el log de los servicios
+´´´bash
+journalctl -u aforo-engine.service -f --output=cat
+´´´´
 ---
 
 ## Requisitos previos
